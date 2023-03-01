@@ -1,13 +1,7 @@
 # docker-typecho
-you can use it quickly build your typecho blog
+项目包含php、nginx，未包含redis和mysql，因为笔者本地有这俩服务
 
-项目包含(mysql、redis、php、nginx)版本均为docker默认。
-默认开启80、443、3306端口。
-数据库地址：mysql
-数据库root默认密码：123456
-数据库登录默认密码：123456
-默认账号及数据库：typecho
-更改数据库请参考docker-compose.yml文件
+如果本地这俩服务没有，参考最后的文档来修改docker-compose.yml文件
 
 使用方法：
 
@@ -47,6 +41,51 @@ you can use it quickly build your typecho blog
 
 
 
+
+## 附：完整docker-compose.yaml文件
+
+```yaml
+services:
+ mysql:
+   image: mysql:5.7
+   privileged: false
+   restart: always
+   volumes:
+   - ./mysql:/var/lib/mysql
+   environment:
+     - MYSQL_ROOT_PASSWORD=root
+     - MYSQL_DATABASE=typecho
+     - MYSQL_USER=typecho
+     - MYSQL_PASSWORD=123456
+ redis:
+   image: redis
+   privileged: false
+   restart: always
+   environment:
+   - REDIS_PASS=**None**
+ php:
+   image: php:7.2-fpm
+   volumes:
+     - ./web:/www
+     #- ./php.ini:/usr/local/etc/php/php.ini
+   links:
+     - mysql
+     - redis
+ nginx:
+   image: nginx:1.20.1
+   volumes:
+     - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+     - ./nginx/fastcgi_params:/etc/nginx/fastcgi_params.modified
+     - ./nginx/ssl:/etc/nginx/ssl
+   volumes_from:
+     - php
+   ports:
+     - 80:80
+     #- 443:443
+   links:
+     - php
+
+```
 
 
 
