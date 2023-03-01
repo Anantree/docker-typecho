@@ -1,38 +1,19 @@
-mysql:
-  image: mysql:5.7
-  privileged: false
-  restart: always
-  volumes:
-  - ./mysql:/var/lib/mysql
-  environment:
-    - MYSQL_ROOT_PASSWORD=123456
-    - MYSQL_DATABASE=typecho
-    - MYSQL_USER=typecho
-    - MYSQL_PASSWORD=123456
-redis:
-  image: redis
-  privileged: false
-  restart: always
-  environment:
-  - REDIS_PASS=**None**
-php:
-  image: wilcool/php:7.1.2-fpm
-  volumes:
-    - ./web:/www
-    #- ./php.ini:/usr/local/etc/php/php.ini
-  links:
-    - mysql
-    - redis
-nginx:
-  image: nginx:1.10.2
-  volumes:
-    - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-    - ./nginx/fastcgi_params:/etc/nginx/fastcgi_params.modified
-    - ./nginx/ssl:/etc/nginx/ssl
-  volumes_from:
-    - php
-  ports:
-    - 80:80
-    #- 443:443
-  links:
-    - php
+services:
+ php:
+   image: php:7.2-fpm
+   volumes:
+     - ./web:/www
+     #- ./php.ini:/usr/local/etc/php/php.ini
+ nginx:
+   image: nginx:1.20.1
+   volumes:
+     - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+     - ./nginx/fastcgi_params:/etc/nginx/fastcgi_params.modified
+     - ./nginx/ssl:/etc/nginx/ssl
+   volumes_from:
+     - php
+   ports:
+     - 80:80
+     #- 443:443
+   links:
+     - php

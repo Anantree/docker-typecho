@@ -34,4 +34,27 @@ you can use it quickly build your typecho blog
    docker-compose up -d
    ```
 
-   
+5. 启动好后，会发现选择数据库的下拉框没有mysql的选项。这是因为typecho需要mysql pdo，需要安装php扩展
+
+   - 进入php-fpm的容器，执行下面的语句
+
+   - ```shell
+     docker-php-ext-install pdo_mysql
+     ```
+
+   - 安装完后重启服务即可
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
